@@ -14,7 +14,141 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      bookings: {
+        Row: {
+          booking_reference: string
+          created_at: string
+          flight_id: string
+          id: string
+          passenger_email: string
+          passenger_name: string
+          passenger_phone: string
+          payment_method: string
+          payment_status: string
+          special_assistance: string | null
+          total_amount: number
+          user_id: string
+        }
+        Insert: {
+          booking_reference: string
+          created_at?: string
+          flight_id: string
+          id?: string
+          passenger_email: string
+          passenger_name: string
+          passenger_phone: string
+          payment_method: string
+          payment_status?: string
+          special_assistance?: string | null
+          total_amount: number
+          user_id: string
+        }
+        Update: {
+          booking_reference?: string
+          created_at?: string
+          flight_id?: string
+          id?: string
+          passenger_email?: string
+          passenger_name?: string
+          passenger_phone?: string
+          payment_method?: string
+          payment_status?: string
+          special_assistance?: string | null
+          total_amount?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      notification_settings: {
+        Row: {
+          created_at: string
+          email_enabled: boolean
+          id: string
+          sms_enabled: boolean
+          updated_at: string
+          user_id: string
+          whatsapp_enabled: boolean
+        }
+        Insert: {
+          created_at?: string
+          email_enabled?: boolean
+          id?: string
+          sms_enabled?: boolean
+          updated_at?: string
+          user_id: string
+          whatsapp_enabled?: boolean
+        }
+        Update: {
+          created_at?: string
+          email_enabled?: boolean
+          id?: string
+          sms_enabled?: boolean
+          updated_at?: string
+          user_id?: string
+          whatsapp_enabled?: boolean
+        }
+        Relationships: []
+      }
+      notifications: {
+        Row: {
+          created_at: string
+          id: string
+          is_read: boolean
+          message: string
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          message: string
+          title: string
+          type?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          message?: string
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          email: string | null
+          full_name: string | null
+          id: string
+          phone: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          phone?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          phone?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

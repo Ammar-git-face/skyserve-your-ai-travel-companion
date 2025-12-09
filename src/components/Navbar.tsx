@@ -1,13 +1,21 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Plane, Menu, X, User } from "lucide-react";
+import { Plane, Menu, X, User, LogOut } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/hooks/useAuth";
 
 const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   const isHome = location.pathname === "/";
+  const { user, signOut } = useAuth();
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/");
+  };
 
   return (
     <header className={cn(
@@ -74,19 +82,44 @@ const Navbar = () => {
 
           {/* Desktop Actions */}
           <div className="hidden lg:flex items-center gap-4">
-            <Button 
-              variant={isHome ? "glass" : "ghost"} 
-              size="sm"
-              className={cn(
-                isHome && "text-primary-foreground border-primary-foreground/20"
-              )}
-            >
-              <User className="w-4 h-4" />
-              Sign In
-            </Button>
-            <Button variant={isHome ? "hero" : "default"} size="sm">
-              Register
-            </Button>
+            {user ? (
+              <>
+                <span className={cn(
+                  "text-sm font-medium",
+                  isHome ? "text-primary-foreground/90" : "text-muted-foreground"
+                )}>
+                  {user.email}
+                </span>
+                <Button 
+                  variant={isHome ? "glass" : "ghost"} 
+                  size="sm"
+                  onClick={handleSignOut}
+                  className={cn(
+                    isHome && "text-primary-foreground border-primary-foreground/20"
+                  )}
+                >
+                  <LogOut className="w-4 h-4 mr-1" />
+                  Sign Out
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button 
+                  variant={isHome ? "glass" : "ghost"} 
+                  size="sm"
+                  onClick={() => navigate("/auth")}
+                  className={cn(
+                    isHome && "text-primary-foreground border-primary-foreground/20"
+                  )}
+                >
+                  <User className="w-4 h-4" />
+                  Sign In
+                </Button>
+                <Button variant={isHome ? "hero" : "default"} size="sm" onClick={() => navigate("/auth")}>
+                  Register
+                </Button>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -134,12 +167,21 @@ const Navbar = () => {
                 Support
               </Link>
               <div className="flex gap-3 pt-3 border-t border-border">
-                <Button variant="outline" size="sm" className="flex-1">
-                  Sign In
-                </Button>
-                <Button variant="default" size="sm" className="flex-1">
-                  Register
-                </Button>
+                {user ? (
+                  <Button variant="outline" size="sm" className="flex-1" onClick={() => { handleSignOut(); setMobileMenuOpen(false); }}>
+                    <LogOut className="w-4 h-4 mr-1" />
+                    Sign Out
+                  </Button>
+                ) : (
+                  <>
+                    <Button variant="outline" size="sm" className="flex-1" onClick={() => { navigate("/auth"); setMobileMenuOpen(false); }}>
+                      Sign In
+                    </Button>
+                    <Button variant="default" size="sm" className="flex-1" onClick={() => { navigate("/auth"); setMobileMenuOpen(false); }}>
+                      Register
+                    </Button>
+                  </>
+                )}
               </div>
             </div>
           </div>

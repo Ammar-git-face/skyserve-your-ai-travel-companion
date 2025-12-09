@@ -20,6 +20,8 @@ import {
 import { cn } from "@/lib/utils";
 import { format, parseISO } from "date-fns";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 
 interface BookingFormProps {
   flight: Flight;
@@ -46,6 +48,7 @@ interface BookingDetails {
 type PaymentMethod = 'paystack' | 'card' | 'paypal' | 'stripe';
 
 const BookingForm = ({ flight, passengers, onComplete }: BookingFormProps) => {
+  const { user } = useAuth();
   const [step, setStep] = useState<'details' | 'payment' | 'confirm'>('details');
   const [passengerDetails, setPassengerDetails] = useState<PassengerInfo[]>(
     Array.from({ length: passengers }, () => ({
@@ -63,6 +66,35 @@ const BookingForm = ({ flight, passengers, onComplete }: BookingFormProps) => {
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('paystack');
+
+  const saveBookingToDatabase = async (bookingReference: string) => {
+    if (!user) {
+      console.log('User not logged in, booking not saved to database');
+      return;
+    }
+
+    try {
+      const { error } = await supabase.from('bookings').insert({
+        user_id: user.id,
+        flight_id: flight.id,
+        passenger_name: `${passengerDetails[0].firstName} ${passengerDetails[0].lastName}`,
+        passenger_email: passengerDetails[0].email,
+        passenger_phone: passengerDetails[0].phone,
+        special_assistance: passengerDetails[0].specialAssistance || null,
+        payment_method: paymentMethod,
+        payment_status: 'completed',
+        total_amount: flight.price * passengers,
+        booking_reference: bookingReference
+      });
+
+      if (error) {
+        console.error('Error saving booking:', error);
+        toast.error('Booking saved but could not sync to your account');
+      }
+    } catch (err) {
+      console.error('Error saving booking:', err);
+    }
+  };
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-NG', {
@@ -101,9 +133,10 @@ const BookingForm = ({ flight, passengers, onComplete }: BookingFormProps) => {
       amount: totalPrice * 100, // Amount in kobo
       currency: 'NGN',
       ref: 'SK' + Math.random().toString(36).substr(2, 9).toUpperCase(),
-      callback: function(response: any) {
+      callback: async function(response: any) {
         toast.success('Payment successful!');
         const bookingReference = response.reference;
+        await saveBookingToDatabase(bookingReference);
         onComplete({
           passengers: passengerDetails,
           paymentComplete: true,
@@ -120,9 +153,10 @@ const BookingForm = ({ flight, passengers, onComplete }: BookingFormProps) => {
       handler.openIframe();
     } else {
       // Fallback for demo if Paystack script not loaded
-      setTimeout(() => {
+      setTimeout(async () => {
         const bookingReference = 'SK' + Math.random().toString(36).substr(2, 6).toUpperCase();
         toast.success('Payment successful!');
+        await saveBookingToDatabase(bookingReference);
         onComplete({
           passengers: passengerDetails,
           paymentComplete: true,
@@ -145,6 +179,8 @@ const BookingForm = ({ flight, passengers, onComplete }: BookingFormProps) => {
     
     const bookingReference = 'SK' + Math.random().toString(36).substr(2, 6).toUpperCase();
     toast.success('Payment successful!');
+    
+    await saveBookingToDatabase(bookingReference);
     
     onComplete({
       passengers: passengerDetails,
