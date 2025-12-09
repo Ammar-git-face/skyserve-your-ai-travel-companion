@@ -2,9 +2,14 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import DateRangePicker from "@/components/DateRangePicker";
 import { 
+  Plane, 
+  ArrowLeftRight, 
+  Users, 
+  Search,
+  MapPin
+} from "lucide-react";
   Plane, 
   ArrowLeftRight, 
   Calendar as CalendarIcon, 
@@ -225,63 +230,19 @@ const FlightSearch = ({ defaultFlightType = 'domestic' }: FlightSearchProps) => 
         </div>
 
         {/* Dates with Modern Calendar */}
-        <div className={cn(tripType === 'oneway' ? "" : "")}>
-          <Label className="text-sm font-medium text-muted-foreground mb-2 block">Departure</Label>
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                className={cn(
-                  "w-full justify-start text-left font-normal h-11",
-                  !departDate && "text-muted-foreground"
-                )}
-              >
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                {departDate ? format(departDate, "EEE, MMM d, yyyy") : <span>Select date</span>}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0 pointer-events-auto" align="start">
-              <Calendar
-                mode="single"
-                selected={departDate}
-                onSelect={setDepartDate}
-                disabled={(date) => date < new Date()}
-                initialFocus
-                className="p-3 pointer-events-auto"
-              />
-            </PopoverContent>
-          </Popover>
+        <div className="lg:col-span-2">
+          <Label className="text-sm font-medium text-muted-foreground mb-2 block">
+            {tripType === 'oneway' ? 'Departure Date' : 'Travel Dates'}
+          </Label>
+          <DateRangePicker
+            departDate={departDate}
+            returnDate={returnDate}
+            onDepartDateChange={setDepartDate}
+            onReturnDateChange={setReturnDate}
+            mode={tripType === 'oneway' ? 'single' : 'range'}
+            placeholder={tripType === 'oneway' ? 'Select departure date' : 'Select travel dates'}
+          />
         </div>
-
-        {tripType !== 'oneway' && (
-          <div>
-            <Label className="text-sm font-medium text-muted-foreground mb-2 block">Return</Label>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className={cn(
-                    "w-full justify-start text-left font-normal h-11",
-                    !returnDate && "text-muted-foreground"
-                  )}
-                >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {returnDate ? format(returnDate, "EEE, MMM d, yyyy") : <span>Select date</span>}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0 pointer-events-auto" align="start">
-                <Calendar
-                  mode="single"
-                  selected={returnDate}
-                  onSelect={setReturnDate}
-                  disabled={(date) => date < (departDate || new Date())}
-                  initialFocus
-                  className="p-3 pointer-events-auto"
-                />
-              </PopoverContent>
-            </Popover>
-          </div>
-        )}
 
         {/* Passengers */}
         <div>
