@@ -3,10 +3,12 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
+import FlightDetailsEnhanced from "@/components/FlightDetailsEnhanced";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Plane, Calendar, Clock, Ticket, Loader2 } from "lucide-react";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Plane, Calendar, Clock, Ticket, Loader2, ChevronDown, ChevronUp } from "lucide-react";
 import { format } from "date-fns";
 import { allFlights } from "@/data/flights";
 
@@ -26,6 +28,7 @@ const MyBookings = () => {
   const { user, loading: authLoading } = useAuth();
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
+  const [expandedBookings, setExpandedBookings] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -57,6 +60,18 @@ const MyBookings = () => {
     return allFlights.find(f => f.id === flightId);
   };
 
+  const toggleExpanded = (bookingId: string) => {
+    setExpandedBookings(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(bookingId)) {
+        newSet.delete(bookingId);
+      } else {
+        newSet.add(bookingId);
+      }
+      return newSet;
+    });
+  };
+
   if (authLoading || loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -71,9 +86,14 @@ const MyBookings = () => {
       
       <main className="pt-24 pb-12">
         <div className="container mx-auto px-4 lg:px-8">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-foreground mb-2">My Bookings</h1>
-            <p className="text-muted-foreground">View and manage your flight reservations</p>
+          <div className="mb-8 flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-foreground mb-2">My Bookings</h1>
+              <p className="text-muted-foreground">View and manage your flight reservations</p>
+            </div>
+            <Button variant="outline" onClick={() => navigate('/dashboard')}>
+              Dashboard
+            </Button>
           </div>
 
           {bookings.length === 0 ? (
@@ -87,10 +107,12 @@ const MyBookings = () => {
             </Card>
           ) : (
             <div className="grid gap-6">
-              {bookings.map((booking) => {
+              {bookings.map((booking, idx) => {
                 const flight = getFlightDetails(booking.flight_id);
+                const isExpanded = expandedBookings.has(booking.id);
+
                 return (
-                  <Card key={booking.id} className="hover-lift animate-fade-in">
+                  <Card key={booking.id} className="hover-lift animate-fade-in" style={{ animationDelay: `${idx * 100}ms` }}>
                     <CardHeader className="pb-2">
                       <div className="flex items-center justify-between">
                         <CardTitle className="text-lg flex items-center gap-2">
@@ -140,16 +162,39 @@ const MyBookings = () => {
                         </div>
                       )}
                       
-                      <div className="mt-4 flex items-center gap-4 text-sm text-muted-foreground">
-                        <span className="flex items-center gap-1">
-                          <Calendar className="w-4 h-4" />
-                          {format(new Date(booking.created_at), 'PPP')}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Clock className="w-4 h-4" />
-                          {format(new Date(booking.created_at), 'p')}
-                        </span>
+                      <div className="mt-4 flex items-center justify-between">
+                        <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                          <span className="flex items-center gap-1">
+                            <Calendar className="w-4 h-4" />
+                            {format(new Date(booking.created_at), 'PPP')}
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <Clock className="w-4 h-4" />
+                            {format(new Date(booking.created_at), 'p')}
+                          </span>
+                        </div>
+
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => toggleExpanded(booking.id)}
+                          className="text-primary"
+                        >
+                          {isExpanded ? (
+                            <>Hide Details <ChevronUp className="w-4 h-4 ml-1" /></>
+                          ) : (
+                            <>View Details <ChevronDown className="w-4 h-4 ml-1" /></>
+                          )}
+                        </Button>
                       </div>
+
+                      {/* Enhanced Flight Details */}
+                      {isExpanded && flight && (
+                        <FlightDetailsEnhanced 
+                          flightId={flight.id} 
+                          flightNumber={flight.flightNumber} 
+                        />
+                      )}
                     </CardContent>
                   </Card>
                 );

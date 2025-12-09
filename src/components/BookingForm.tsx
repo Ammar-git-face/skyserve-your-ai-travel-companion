@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Flight } from "@/data/flights";
+import PaymentLoadingOverlay from "@/components/PaymentLoadingOverlay";
 import { 
   User, 
   Mail, 
@@ -203,8 +204,9 @@ const BookingForm = ({ flight, passengers, onComplete }: BookingFormProps) => {
   ];
 
   return (
-    <div className="glass-card overflow-hidden">
-      {/* Progress Steps */}
+    <>
+      <PaymentLoadingOverlay isVisible={isProcessing} />
+      <div className="glass-card overflow-hidden">
       <div className="gradient-sky p-4">
         <div className="flex items-center justify-center gap-4">
           <div className={cn(
@@ -538,6 +540,7 @@ const BookingForm = ({ flight, passengers, onComplete }: BookingFormProps) => {
         )}
       </div>
     </div>
+    </>
   );
 };
 
