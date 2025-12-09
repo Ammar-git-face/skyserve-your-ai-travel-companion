@@ -9,6 +9,9 @@ import SearchResults from "./pages/SearchResults";
 import Booking from "./pages/Booking";
 import Auth from "./pages/Auth";
 import MyBookings from "./pages/MyBookings";
+import FlightStatus from "./pages/FlightStatus";
+import Support from "./pages/Support";
+import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,6 +29,9 @@ const App = () => (
             <Route path="/booking/:flightId" element={<Booking />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/my-bookings" element={<MyBookings />} />
+            <Route path="/flight-status" element={<FlightStatus />} />
+            <Route path="/support" element={<Support />} />
+            <Route path="/dashboard" element={<Dashboard />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

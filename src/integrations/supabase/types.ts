@@ -67,6 +67,7 @@ export type Database = {
           sms_enabled: boolean
           updated_at: string
           user_id: string
+          web_enabled: boolean
           whatsapp_enabled: boolean
         }
         Insert: {
@@ -76,6 +77,7 @@ export type Database = {
           sms_enabled?: boolean
           updated_at?: string
           user_id: string
+          web_enabled?: boolean
           whatsapp_enabled?: boolean
         }
         Update: {
@@ -85,6 +87,7 @@ export type Database = {
           sms_enabled?: boolean
           updated_at?: string
           user_id?: string
+          web_enabled?: boolean
           whatsapp_enabled?: boolean
         }
         Relationships: []

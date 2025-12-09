@@ -41,8 +41,9 @@ const ChatBot = ({ destinationCity }: ChatBotProps) => {
   ]);
   const [input, setInput] = useState('');
   const [isListening, setIsListening] = useState(false);
-  const [language, setLanguage] = useState<'en' | 'ha' | 'yo'>('en');
+  const [language, setLanguage] = useState<'en' | 'ha' | 'yo' | 'ig'>('en');
   const [isTyping, setIsTyping] = useState(false);
+  const [recognition, setRecognition] = useState<any>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -63,7 +64,15 @@ const ChatBot = ({ destinationCity }: ChatBotProps) => {
   const languageNames = {
     en: 'English',
     ha: 'Hausa',
-    yo: 'Yoruba'
+    yo: 'Yoruba',
+    ig: 'Igbo'
+  };
+
+  const languageCodes = {
+    en: 'en-US',
+    ha: 'ha-NG',
+    yo: 'yo-NG',
+    ig: 'ig-NG'
   };
 
   const generateResponse = (userMessage: string): string => {
@@ -154,20 +163,54 @@ const ChatBot = ({ destinationCity }: ChatBotProps) => {
   };
 
   const handleVoiceInput = () => {
-    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-      setIsListening(!isListening);
-      // Voice recognition would be implemented here
-      // For demo, we'll just toggle the state
-      if (!isListening) {
-        setTimeout(() => {
-          setInput("Check my flight status for SK201");
-          setIsListening(false);
-        }, 2000);
-      }
-    } else {
-      alert('Voice input is not supported in your browser');
+    const SpeechRecognition = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
+    
+    if (!SpeechRecognition) {
+      toast.error('Voice input is not supported in your browser');
+      return;
     }
+
+    if (isListening && recognition) {
+      recognition.stop();
+      setIsListening(false);
+      return;
+    }
+
+    const recognizer = new SpeechRecognition();
+    recognizer.continuous = false;
+    recognizer.interimResults = false;
+    recognizer.lang = languageCodes[language];
+
+    recognizer.onresult = (event: any) => {
+      const transcript = event.results[0][0].transcript;
+      setInput(transcript);
+      setIsListening(false);
+      
+      // Auto-process voice commands
+      if (transcript.toLowerCase().includes('search flight')) {
+        handleQuickAction(transcript);
+      } else if (transcript.toLowerCase().includes('show my bookings') || transcript.toLowerCase().includes('my bookings')) {
+        window.location.href = '/my-bookings';
+      } else if (transcript.toLowerCase().includes('help') || transcript.toLowerCase().includes('ticket change')) {
+        handleQuickAction('Help me with ticket changes');
+      }
+    };
+
+    recognizer.onerror = () => {
+      setIsListening(false);
+      toast.error('Voice recognition error. Please try again.');
+    };
+
+    recognizer.onend = () => {
+      setIsListening(false);
+    };
+
+    setRecognition(recognizer);
+    recognizer.start();
+    setIsListening(true);
   };
+
+  const toast = { error: (msg: string) => console.log(msg) };
 
   const handleQuickAction = (query: string) => {
     setInput(query);
@@ -206,7 +249,7 @@ const ChatBot = ({ destinationCity }: ChatBotProps) => {
             <div className="flex items-center gap-2">
               <button
                 onClick={() => {
-                  const langs: ('en' | 'ha' | 'yo')[] = ['en', 'ha', 'yo'];
+                  const langs: ('en' | 'ha' | 'yo' | 'ig')[] = ['en', 'ha', 'yo', 'ig'];
                   const currentIndex = langs.indexOf(language);
                   setLanguage(langs[(currentIndex + 1) % langs.length]);
                 }}
