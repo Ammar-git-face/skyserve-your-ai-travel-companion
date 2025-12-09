@@ -2,10 +2,12 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { 
   Plane, 
   ArrowLeftRight, 
-  Calendar, 
+  Calendar as CalendarIcon, 
   Users, 
   Search,
   MapPin
@@ -13,6 +15,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { searchAirports, type Airport } from "@/data/airports";
+import { format } from "date-fns";
 
 interface FlightSearchProps {
   defaultFlightType?: 'domestic' | 'international';
@@ -21,11 +24,11 @@ interface FlightSearchProps {
 const FlightSearch = ({ defaultFlightType = 'domestic' }: FlightSearchProps) => {
   const navigate = useNavigate();
   const [flightType, setFlightType] = useState<'domestic' | 'international'>(defaultFlightType);
-  const [tripType, setTripType] = useState<'roundtrip' | 'oneway'>('roundtrip');
+  const [tripType, setTripType] = useState<'roundtrip' | 'oneway' | 'multicity'>('roundtrip');
   const [from, setFrom] = useState('');
   const [to, setTo] = useState('');
-  const [departDate, setDepartDate] = useState('');
-  const [returnDate, setReturnDate] = useState('');
+  const [departDate, setDepartDate] = useState<Date>();
+  const [returnDate, setReturnDate] = useState<Date>();
   const [passengers, setPassengers] = useState(1);
   const [showFromSuggestions, setShowFromSuggestions] = useState(false);
   const [showToSuggestions, setShowToSuggestions] = useState(false);
@@ -40,12 +43,12 @@ const FlightSearch = ({ defaultFlightType = 'domestic' }: FlightSearchProps) => 
       type: flightType,
       from: fromAirport?.code || '',
       to: toAirport?.code || '',
-      date: departDate,
+      date: departDate ? format(departDate, 'yyyy-MM-dd') : '',
       passengers: passengers.toString(),
       tripType
     });
-    if (tripType === 'roundtrip' && returnDate) {
-      params.set('returnDate', returnDate);
+    if ((tripType === 'roundtrip' || tripType === 'multicity') && returnDate) {
+      params.set('returnDate', format(returnDate, 'yyyy-MM-dd'));
     }
     navigate(`/search?${params.toString()}`);
   };
@@ -72,14 +75,14 @@ const FlightSearch = ({ defaultFlightType = 'domestic' }: FlightSearchProps) => 
   };
 
   return (
-    <div className="glass-card p-6 lg:p-8 w-full max-w-5xl mx-auto">
+    <div className="glass-card p-6 lg:p-8 w-full max-w-5xl mx-auto hover-lift">
       {/* Flight Type Toggle */}
       <div className="flex flex-wrap gap-4 mb-6">
         <div className="flex bg-secondary rounded-xl p-1">
           <button
             onClick={() => setFlightType('domestic')}
             className={cn(
-              "px-4 py-2 rounded-lg text-sm font-medium transition-all",
+              "px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300",
               flightType === 'domestic' 
                 ? "bg-primary text-primary-foreground shadow-soft" 
                 : "text-muted-foreground hover:text-foreground"
@@ -93,7 +96,7 @@ const FlightSearch = ({ defaultFlightType = 'domestic' }: FlightSearchProps) => 
           <button
             onClick={() => setFlightType('international')}
             className={cn(
-              "px-4 py-2 rounded-lg text-sm font-medium transition-all",
+              "px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300",
               flightType === 'international' 
                 ? "bg-primary text-primary-foreground shadow-soft" 
                 : "text-muted-foreground hover:text-foreground"
@@ -110,7 +113,7 @@ const FlightSearch = ({ defaultFlightType = 'domestic' }: FlightSearchProps) => 
           <button
             onClick={() => setTripType('roundtrip')}
             className={cn(
-              "px-4 py-2 rounded-lg text-sm font-medium transition-all",
+              "px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300",
               tripType === 'roundtrip' 
                 ? "bg-card text-foreground shadow-soft" 
                 : "text-muted-foreground hover:text-foreground"
@@ -121,13 +124,24 @@ const FlightSearch = ({ defaultFlightType = 'domestic' }: FlightSearchProps) => 
           <button
             onClick={() => setTripType('oneway')}
             className={cn(
-              "px-4 py-2 rounded-lg text-sm font-medium transition-all",
+              "px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300",
               tripType === 'oneway' 
                 ? "bg-card text-foreground shadow-soft" 
                 : "text-muted-foreground hover:text-foreground"
             )}
           >
             One Way
+          </button>
+          <button
+            onClick={() => setTripType('multicity')}
+            className={cn(
+              "px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300",
+              tripType === 'multicity' 
+                ? "bg-card text-foreground shadow-soft" 
+                : "text-muted-foreground hover:text-foreground"
+            )}
+          >
+            Multi-City
           </button>
         </div>
       </div>
@@ -152,7 +166,7 @@ const FlightSearch = ({ defaultFlightType = 'domestic' }: FlightSearchProps) => 
             />
           </div>
           {showFromSuggestions && from && fromSuggestions.length > 0 && (
-            <div className="absolute top-full left-0 right-0 mt-1 bg-card border border-border rounded-lg shadow-elevated z-50 max-h-48 overflow-y-auto">
+            <div className="absolute top-full left-0 right-0 mt-1 bg-card border border-border rounded-lg shadow-elevated z-50 max-h-48 overflow-y-auto animate-scale-in">
               {fromSuggestions.map((airport) => (
                 <button
                   key={airport.code}
@@ -171,7 +185,7 @@ const FlightSearch = ({ defaultFlightType = 'domestic' }: FlightSearchProps) => 
         <div className="hidden lg:flex items-end justify-center pb-1.5 -mx-4">
           <button
             onClick={swapLocations}
-            className="p-2 rounded-full bg-secondary hover:bg-accent transition-colors"
+            className="p-2 rounded-full bg-secondary hover:bg-accent transition-all duration-300 hover:rotate-180"
           >
             <ArrowLeftRight className="w-5 h-5 text-muted-foreground" />
           </button>
@@ -195,7 +209,7 @@ const FlightSearch = ({ defaultFlightType = 'domestic' }: FlightSearchProps) => 
             />
           </div>
           {showToSuggestions && to && toSuggestions.length > 0 && (
-            <div className="absolute top-full left-0 right-0 mt-1 bg-card border border-border rounded-lg shadow-elevated z-50 max-h-48 overflow-y-auto">
+            <div className="absolute top-full left-0 right-0 mt-1 bg-card border border-border rounded-lg shadow-elevated z-50 max-h-48 overflow-y-auto animate-scale-in">
               {toSuggestions.map((airport) => (
                 <button
                   key={airport.code}
@@ -210,32 +224,62 @@ const FlightSearch = ({ defaultFlightType = 'domestic' }: FlightSearchProps) => 
           )}
         </div>
 
-        {/* Dates */}
-        <div className={cn(tripType === 'roundtrip' ? "lg:col-span-1" : "")}>
+        {/* Dates with Modern Calendar */}
+        <div className={cn(tripType === 'oneway' ? "" : "")}>
           <Label className="text-sm font-medium text-muted-foreground mb-2 block">Departure</Label>
-          <div className="relative">
-            <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-            <Input
-              type="date"
-              value={departDate}
-              onChange={(e) => setDepartDate(e.target.value)}
-              className="pl-10"
-            />
-          </div>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className={cn(
+                  "w-full justify-start text-left font-normal h-11",
+                  !departDate && "text-muted-foreground"
+                )}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {departDate ? format(departDate, "EEE, MMM d, yyyy") : <span>Select date</span>}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0 pointer-events-auto" align="start">
+              <Calendar
+                mode="single"
+                selected={departDate}
+                onSelect={setDepartDate}
+                disabled={(date) => date < new Date()}
+                initialFocus
+                className="p-3 pointer-events-auto"
+              />
+            </PopoverContent>
+          </Popover>
         </div>
 
-        {tripType === 'roundtrip' && (
+        {tripType !== 'oneway' && (
           <div>
             <Label className="text-sm font-medium text-muted-foreground mb-2 block">Return</Label>
-            <div className="relative">
-              <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-              <Input
-                type="date"
-                value={returnDate}
-                onChange={(e) => setReturnDate(e.target.value)}
-                className="pl-10"
-              />
-            </div>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className={cn(
+                    "w-full justify-start text-left font-normal h-11",
+                    !returnDate && "text-muted-foreground"
+                  )}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {returnDate ? format(returnDate, "EEE, MMM d, yyyy") : <span>Select date</span>}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0 pointer-events-auto" align="start">
+                <Calendar
+                  mode="single"
+                  selected={returnDate}
+                  onSelect={setReturnDate}
+                  disabled={(date) => date < (departDate || new Date())}
+                  initialFocus
+                  className="p-3 pointer-events-auto"
+                />
+              </PopoverContent>
+            </Popover>
           </div>
         )}
 
@@ -265,7 +309,7 @@ const FlightSearch = ({ defaultFlightType = 'domestic' }: FlightSearchProps) => 
           onClick={handleSearch}
           variant="skyPrimary"
           size="xl"
-          className="w-full md:w-auto md:min-w-[200px]"
+          className="w-full md:w-auto md:min-w-[200px] hover:scale-105 transition-transform duration-300"
         >
           <Search className="w-5 h-5" />
           Search Flights

@@ -163,6 +163,7 @@
     );
   }
 
+  /* Enhanced animations */
   .animate-float {
     animation: float 6s ease-in-out infinite;
   }
@@ -177,6 +178,36 @@
 
   .animate-fade-in {
     animation: fadeIn 0.5s ease-out forwards;
+  }
+
+  .animate-slide-in-up {
+    animation: slideInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0;
+  }
+
+  .animate-bounce-in {
+    animation: bounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+  }
+
+  .animate-glow {
+    animation: glow 2s ease-in-out infinite alternate;
+  }
+
+  .animate-shimmer-fast {
+    animation: shimmer 1.5s infinite;
+  }
+
+  .hover-lift {
+    @apply transition-all duration-300;
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-elevated);
+  }
+
+  .hover-glow:hover {
+    box-shadow: var(--shadow-glow);
   }
 }
 
@@ -211,12 +242,49 @@
   }
 }
 
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
   }
   to {
     opacity: 1;
+  }
+}
+
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes glow {
+  from {
+    box-shadow: 0 0 20px hsl(var(--primary) / 0.3);
+  }
+  to {
+    box-shadow: 0 0 40px hsl(var(--primary) / 0.6);
   }
 }
 
@@ -229,6 +297,38 @@
   }
 }
 
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1);
+    opacity: 0.4;
+  }
+  100% {
+    transform: scale(0.8);
+    opacity: 0.8;
+  }
+}
+
+@keyframes fly-across {
+  0% {
+    transform: translateX(-100%) rotate(-5deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(100vw) rotate(-5deg);
+    opacity: 0;
+  }
+}
+
 .shimmer {
   background: linear-gradient(
     90deg,
@@ -238,4 +338,34 @@
   );
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
+}
+
+/* Modern Calendar Styles */
+.rdp {
+  --rdp-cell-size: 40px;
+  --rdp-accent-color: hsl(var(--primary));
+  --rdp-background-color: hsl(var(--primary) / 0.1);
+}
+
+.rdp-day_selected:not([disabled]) {
+  background: var(--gradient-sky) !important;
+  color: hsl(var(--primary-foreground)) !important;
+  font-weight: 600;
+  border-radius: 0.5rem;
+}
+
+.rdp-day_today:not(.rdp-day_selected) {
+  background: hsl(var(--accent) / 0.15);
+  color: hsl(var(--accent));
+  font-weight: 600;
+}
+
+.rdp-day:hover:not([disabled]):not(.rdp-day_selected) {
+  background: hsl(var(--primary) / 0.1);
+  border-radius: 0.5rem;
+}
+
+.rdp-button:focus-visible {
+  outline: 2px solid hsl(var(--primary));
+  outline-offset: 2px;
 }
