@@ -6,9 +6,16 @@ import {
   CheckCircle,
   X,
   Clock,
-  Plane
+  Plane,
+  Settings,
+  Mail,
+  MessageSquare,
+  Phone
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 
 interface Notification {
   id: string;
@@ -18,6 +25,12 @@ interface Notification {
   flightNumber?: string;
   timestamp: Date;
   read: boolean;
+}
+
+interface NotificationSettings {
+  email: boolean;
+  whatsapp: boolean;
+  sms: boolean;
 }
 
 const FlightAlerts = () => {
@@ -51,6 +64,12 @@ const FlightAlerts = () => {
     }
   ]);
   const [isOpen, setIsOpen] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+  const [settings, setSettings] = useState<NotificationSettings>({
+    email: true,
+    whatsapp: false,
+    sms: false
+  });
 
   const unreadCount = notifications.filter(n => !n.read).length;
 
@@ -143,11 +162,14 @@ const FlightAlerts = () => {
       {/* Bell Icon with Badge */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative p-2 rounded-lg bg-secondary hover:bg-accent transition-colors"
+        className="relative p-2 rounded-lg bg-secondary hover:bg-accent/20 transition-all duration-300 hover:scale-105"
       >
-        <Bell className="w-5 h-5 text-foreground" />
+        <Bell className={cn(
+          "w-5 h-5 text-foreground transition-transform",
+          unreadCount > 0 && "animate-bounce-subtle"
+        )} />
         {unreadCount > 0 && (
-          <span className="absolute -top-1 -right-1 w-5 h-5 bg-destructive text-destructive-foreground text-xs font-bold rounded-full flex items-center justify-center animate-bounce-subtle">
+          <span className="absolute -top-1 -right-1 w-5 h-5 bg-destructive text-destructive-foreground text-xs font-bold rounded-full flex items-center justify-center animate-bounce-in">
             {unreadCount}
           </span>
         )}
@@ -163,18 +185,79 @@ const FlightAlerts = () => {
           />
           
           {/* Panel */}
-          <div className="absolute right-0 top-full mt-2 w-80 md:w-96 max-h-[400px] glass-card overflow-hidden z-50 animate-scale-in">
+          <div className="absolute right-0 top-full mt-2 w-80 md:w-96 max-h-[450px] glass-card overflow-hidden z-50 animate-scale-in">
             <div className="p-4 border-b border-border flex items-center justify-between">
               <h3 className="font-semibold text-foreground">Flight Alerts</h3>
-              {unreadCount > 0 && (
-                <button 
-                  onClick={markAllAsRead}
-                  className="text-sm text-primary hover:underline"
+              <div className="flex items-center gap-2">
+                {unreadCount > 0 && (
+                  <button 
+                    onClick={markAllAsRead}
+                    className="text-sm text-primary hover:underline"
+                  >
+                    Mark all as read
+                  </button>
+                )}
+                <button
+                  onClick={() => setShowSettings(!showSettings)}
+                  className={cn(
+                    "p-1.5 rounded-lg transition-colors",
+                    showSettings ? "bg-primary text-primary-foreground" : "hover:bg-secondary"
+                  )}
                 >
-                  Mark all as read
+                  <Settings className="w-4 h-4" />
                 </button>
-              )}
+              </div>
             </div>
+
+            {/* Notification Settings */}
+            {showSettings && (
+              <div className="p-4 bg-secondary/50 border-b border-border animate-fade-in">
+                <h4 className="text-sm font-medium text-foreground mb-3">Notification Preferences</h4>
+                <div className="space-y-3">
+                  <div className="flex items-center gap-3">
+                    <Checkbox 
+                      id="email-notify" 
+                      checked={settings.email}
+                      onCheckedChange={(checked) => setSettings(prev => ({ ...prev, email: checked as boolean }))}
+                    />
+                    <Label htmlFor="email-notify" className="flex items-center gap-2 text-sm cursor-pointer">
+                      <Mail className="w-4 h-4 text-muted-foreground" />
+                      Email Notifications
+                    </Label>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Checkbox 
+                      id="whatsapp-notify" 
+                      checked={settings.whatsapp}
+                      onCheckedChange={(checked) => setSettings(prev => ({ ...prev, whatsapp: checked as boolean }))}
+                    />
+                    <Label htmlFor="whatsapp-notify" className="flex items-center gap-2 text-sm cursor-pointer">
+                      <MessageSquare className="w-4 h-4 text-muted-foreground" />
+                      WhatsApp Notifications
+                    </Label>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Checkbox 
+                      id="sms-notify" 
+                      checked={settings.sms}
+                      onCheckedChange={(checked) => setSettings(prev => ({ ...prev, sms: checked as boolean }))}
+                    />
+                    <Label htmlFor="sms-notify" className="flex items-center gap-2 text-sm cursor-pointer">
+                      <Phone className="w-4 h-4 text-muted-foreground" />
+                      SMS Notifications
+                    </Label>
+                  </div>
+                </div>
+                <Button 
+                  variant="skyPrimary" 
+                  size="sm" 
+                  className="w-full mt-3"
+                  onClick={() => setShowSettings(false)}
+                >
+                  Save Preferences
+                </Button>
+              </div>
+            )}
 
             <div className="max-h-[320px] overflow-y-auto">
               {notifications.length === 0 ? (
@@ -183,18 +266,19 @@ const FlightAlerts = () => {
                   <p>No notifications yet</p>
                 </div>
               ) : (
-                notifications.map((notification) => (
+                notifications.map((notification, index) => (
                   <div
                     key={notification.id}
                     className={cn(
-                      "p-4 border-b border-border last:border-0 transition-colors cursor-pointer hover:bg-accent/50",
+                      "p-4 border-b border-border last:border-0 transition-all cursor-pointer hover:bg-accent/50 animate-slide-in-up",
                       !notification.read && "bg-primary/5"
                     )}
+                    style={{ animationDelay: `${index * 50}ms` }}
                     onClick={() => markAsRead(notification.id)}
                   >
                     <div className="flex items-start gap-3">
                       <div className={cn(
-                        "p-2 rounded-lg border",
+                        "p-2 rounded-lg border transition-transform hover:scale-110",
                         getColors(notification.type)
                       )}>
                         {getIcon(notification.type)}
@@ -209,7 +293,7 @@ const FlightAlerts = () => {
                               e.stopPropagation();
                               dismissNotification(notification.id);
                             }}
-                            className="p-1 hover:bg-accent rounded"
+                            className="p-1 hover:bg-accent rounded transition-colors"
                           >
                             <X className="w-3 h-3 text-muted-foreground" />
                           </button>
@@ -223,7 +307,7 @@ const FlightAlerts = () => {
                           {notification.flightNumber && (
                             <>
                               <span>•</span>
-                              <span className="font-medium">{notification.flightNumber}</span>
+                              <span className="font-medium text-primary">{notification.flightNumber}</span>
                             </>
                           )}
                         </div>
