@@ -1,0 +1,356 @@
+export interface Flight {
+  id: string;
+  airline: string;
+  airlineCode: string;
+  flightNumber: string;
+  departure: {
+    city: string;
+    airport: string;
+    code: string;
+    time: string;
+    date: string;
+  };
+  arrival: {
+    city: string;
+    airport: string;
+    code: string;
+    time: string;
+    date: string;
+  };
+  duration: string;
+  stops: number;
+  price: number;
+  currency: string;
+  class: 'economy' | 'business' | 'first';
+  seatsAvailable: number;
+  type: 'domestic' | 'international';
+  amenities: string[];
+}
+
+export const domesticFlights: Flight[] = [
+  {
+    id: 'DOM001',
+    airline: 'Skyserve Airways',
+    airlineCode: 'SK',
+    flightNumber: 'SK201',
+    departure: { city: 'Lagos', airport: 'Murtala Muhammed Intl', code: 'LOS', time: '06:30', date: '2024-12-20' },
+    arrival: { city: 'Abuja', airport: 'Nnamdi Azikiwe Intl', code: 'ABV', time: '07:45', date: '2024-12-20' },
+    duration: '1h 15m',
+    stops: 0,
+    price: 45000,
+    currency: 'NGN',
+    class: 'economy',
+    seatsAvailable: 45,
+    type: 'domestic',
+    amenities: ['WiFi', 'Snacks', 'Entertainment']
+  },
+  {
+    id: 'DOM002',
+    airline: 'Skyserve Airways',
+    airlineCode: 'SK',
+    flightNumber: 'SK305',
+    departure: { city: 'Lagos', airport: 'Murtala Muhammed Intl', code: 'LOS', time: '09:00', date: '2024-12-20' },
+    arrival: { city: 'Port Harcourt', airport: 'Port Harcourt Intl', code: 'PHC', time: '10:05', date: '2024-12-20' },
+    duration: '1h 05m',
+    stops: 0,
+    price: 38000,
+    currency: 'NGN',
+    class: 'economy',
+    seatsAvailable: 32,
+    type: 'domestic',
+    amenities: ['WiFi', 'Snacks']
+  },
+  {
+    id: 'DOM003',
+    airline: 'Air Nigeria',
+    airlineCode: 'AN',
+    flightNumber: 'AN112',
+    departure: { city: 'Abuja', airport: 'Nnamdi Azikiwe Intl', code: 'ABV', time: '11:30', date: '2024-12-20' },
+    arrival: { city: 'Kano', airport: 'Mallam Aminu Kano Intl', code: 'KAN', time: '12:35', date: '2024-12-20' },
+    duration: '1h 05m',
+    stops: 0,
+    price: 35000,
+    currency: 'NGN',
+    class: 'economy',
+    seatsAvailable: 28,
+    type: 'domestic',
+    amenities: ['Snacks', 'Entertainment']
+  },
+  {
+    id: 'DOM004',
+    airline: 'Skyserve Airways',
+    airlineCode: 'SK',
+    flightNumber: 'SK410',
+    departure: { city: 'Lagos', airport: 'Murtala Muhammed Intl', code: 'LOS', time: '14:00', date: '2024-12-20' },
+    arrival: { city: 'Enugu', airport: 'Akanu Ibiam Intl', code: 'ENU', time: '15:10', date: '2024-12-20' },
+    duration: '1h 10m',
+    stops: 0,
+    price: 42000,
+    currency: 'NGN',
+    class: 'economy',
+    seatsAvailable: 18,
+    type: 'domestic',
+    amenities: ['WiFi', 'Snacks', 'Entertainment']
+  },
+  {
+    id: 'DOM005',
+    airline: 'Dana Air',
+    airlineCode: 'DA',
+    flightNumber: 'DA089',
+    departure: { city: 'Port Harcourt', airport: 'Port Harcourt Intl', code: 'PHC', time: '16:45', date: '2024-12-20' },
+    arrival: { city: 'Lagos', airport: 'Murtala Muhammed Intl', code: 'LOS', time: '17:50', date: '2024-12-20' },
+    duration: '1h 05m',
+    stops: 0,
+    price: 36500,
+    currency: 'NGN',
+    class: 'economy',
+    seatsAvailable: 55,
+    type: 'domestic',
+    amenities: ['Snacks']
+  },
+  {
+    id: 'DOM006',
+    airline: 'Skyserve Airways',
+    airlineCode: 'SK',
+    flightNumber: 'SK502',
+    departure: { city: 'Lagos', airport: 'Murtala Muhammed Intl', code: 'LOS', time: '07:15', date: '2024-12-20' },
+    arrival: { city: 'Calabar', airport: 'Margaret Ekpo Intl', code: 'CBQ', time: '08:30', date: '2024-12-20' },
+    duration: '1h 15m',
+    stops: 0,
+    price: 48000,
+    currency: 'NGN',
+    class: 'economy',
+    seatsAvailable: 22,
+    type: 'domestic',
+    amenities: ['WiFi', 'Snacks', 'Entertainment', 'Meals']
+  },
+  {
+    id: 'DOM007',
+    airline: 'Air Nigeria',
+    airlineCode: 'AN',
+    flightNumber: 'AN225',
+    departure: { city: 'Kano', airport: 'Mallam Aminu Kano Intl', code: 'KAN', time: '10:00', date: '2024-12-20' },
+    arrival: { city: 'Lagos', airport: 'Murtala Muhammed Intl', code: 'LOS', time: '11:30', date: '2024-12-20' },
+    duration: '1h 30m',
+    stops: 0,
+    price: 52000,
+    currency: 'NGN',
+    class: 'business',
+    seatsAvailable: 12,
+    type: 'domestic',
+    amenities: ['WiFi', 'Meals', 'Entertainment', 'Priority Boarding', 'Lounge Access']
+  },
+  {
+    id: 'DOM008',
+    airline: 'Skyserve Airways',
+    airlineCode: 'SK',
+    flightNumber: 'SK618',
+    departure: { city: 'Abuja', airport: 'Nnamdi Azikiwe Intl', code: 'ABV', time: '13:30', date: '2024-12-20' },
+    arrival: { city: 'Lagos', airport: 'Murtala Muhammed Intl', code: 'LOS', time: '14:45', date: '2024-12-20' },
+    duration: '1h 15m',
+    stops: 0,
+    price: 46000,
+    currency: 'NGN',
+    class: 'economy',
+    seatsAvailable: 38,
+    type: 'domestic',
+    amenities: ['WiFi', 'Snacks', 'Entertainment']
+  },
+  {
+    id: 'DOM009',
+    airline: 'Dana Air',
+    airlineCode: 'DA',
+    flightNumber: 'DA156',
+    departure: { city: 'Lagos', airport: 'Murtala Muhammed Intl', code: 'LOS', time: '18:00', date: '2024-12-20' },
+    arrival: { city: 'Abuja', airport: 'Nnamdi Azikiwe Intl', code: 'ABV', time: '19:15', date: '2024-12-20' },
+    duration: '1h 15m',
+    stops: 0,
+    price: 44000,
+    currency: 'NGN',
+    class: 'economy',
+    seatsAvailable: 41,
+    type: 'domestic',
+    amenities: ['Snacks', 'Entertainment']
+  },
+  {
+    id: 'DOM010',
+    airline: 'Skyserve Airways',
+    airlineCode: 'SK',
+    flightNumber: 'SK720',
+    departure: { city: 'Enugu', airport: 'Akanu Ibiam Intl', code: 'ENU', time: '08:45', date: '2024-12-20' },
+    arrival: { city: 'Abuja', airport: 'Nnamdi Azikiwe Intl', code: 'ABV', time: '09:45', date: '2024-12-20' },
+    duration: '1h 00m',
+    stops: 0,
+    price: 39000,
+    currency: 'NGN',
+    class: 'economy',
+    seatsAvailable: 29,
+    type: 'domestic',
+    amenities: ['WiFi', 'Snacks']
+  }
+];
+
+export const internationalFlights: Flight[] = [
+  {
+    id: 'INT001',
+    airline: 'Skyserve Airways',
+    airlineCode: 'SK',
+    flightNumber: 'SK001',
+    departure: { city: 'Lagos', airport: 'Murtala Muhammed Intl', code: 'LOS', time: '22:30', date: '2024-12-20' },
+    arrival: { city: 'London', airport: 'Heathrow', code: 'LHR', time: '05:45', date: '2024-12-21' },
+    duration: '6h 15m',
+    stops: 0,
+    price: 850000,
+    currency: 'NGN',
+    class: 'economy',
+    seatsAvailable: 120,
+    type: 'international',
+    amenities: ['WiFi', 'Meals', 'Entertainment', 'USB Charging', 'Blanket']
+  },
+  {
+    id: 'INT002',
+    airline: 'Skyserve Airways',
+    airlineCode: 'SK',
+    flightNumber: 'SK015',
+    departure: { city: 'Lagos', airport: 'Murtala Muhammed Intl', code: 'LOS', time: '01:00', date: '2024-12-21' },
+    arrival: { city: 'Dubai', airport: 'Dubai Intl', code: 'DXB', time: '11:30', date: '2024-12-21' },
+    duration: '7h 30m',
+    stops: 0,
+    price: 780000,
+    currency: 'NGN',
+    class: 'economy',
+    seatsAvailable: 85,
+    type: 'international',
+    amenities: ['WiFi', 'Meals', 'Entertainment', 'USB Charging']
+  },
+  {
+    id: 'INT003',
+    airline: 'Emirates',
+    airlineCode: 'EK',
+    flightNumber: 'EK783',
+    departure: { city: 'Lagos', airport: 'Murtala Muhammed Intl', code: 'LOS', time: '03:15', date: '2024-12-21' },
+    arrival: { city: 'Dubai', airport: 'Dubai Intl', code: 'DXB', time: '13:45', date: '2024-12-21' },
+    duration: '7h 30m',
+    stops: 0,
+    price: 920000,
+    currency: 'NGN',
+    class: 'business',
+    seatsAvailable: 24,
+    type: 'international',
+    amenities: ['WiFi', 'Gourmet Meals', 'Lie-flat Seats', 'Lounge Access', 'Priority Boarding']
+  },
+  {
+    id: 'INT004',
+    airline: 'Skyserve Airways',
+    airlineCode: 'SK',
+    flightNumber: 'SK045',
+    departure: { city: 'Abuja', airport: 'Nnamdi Azikiwe Intl', code: 'ABV', time: '23:45', date: '2024-12-20' },
+    arrival: { city: 'Johannesburg', airport: 'O.R. Tambo Intl', code: 'JNB', time: '06:30', date: '2024-12-21' },
+    duration: '5h 45m',
+    stops: 0,
+    price: 680000,
+    currency: 'NGN',
+    class: 'economy',
+    seatsAvailable: 92,
+    type: 'international',
+    amenities: ['WiFi', 'Meals', 'Entertainment']
+  },
+  {
+    id: 'INT005',
+    airline: 'British Airways',
+    airlineCode: 'BA',
+    flightNumber: 'BA075',
+    departure: { city: 'Lagos', airport: 'Murtala Muhammed Intl', code: 'LOS', time: '21:00', date: '2024-12-20' },
+    arrival: { city: 'London', airport: 'Heathrow', code: 'LHR', time: '04:15', date: '2024-12-21' },
+    duration: '6h 15m',
+    stops: 0,
+    price: 1250000,
+    currency: 'NGN',
+    class: 'first',
+    seatsAvailable: 8,
+    type: 'international',
+    amenities: ['WiFi', 'Gourmet Dining', 'Suite', 'Lounge Access', 'Chauffeur Service', 'Spa Kit']
+  },
+  {
+    id: 'INT006',
+    airline: 'Skyserve Airways',
+    airlineCode: 'SK',
+    flightNumber: 'SK088',
+    departure: { city: 'Lagos', airport: 'Murtala Muhammed Intl', code: 'LOS', time: '10:30', date: '2024-12-20' },
+    arrival: { city: 'New York', airport: 'JFK Intl', code: 'JFK', time: '16:45', date: '2024-12-20' },
+    duration: '11h 15m',
+    stops: 0,
+    price: 1450000,
+    currency: 'NGN',
+    class: 'economy',
+    seatsAvailable: 145,
+    type: 'international',
+    amenities: ['WiFi', 'Meals', 'Entertainment', 'USB Charging', 'Blanket', 'Amenity Kit']
+  },
+  {
+    id: 'INT007',
+    airline: 'Air France',
+    airlineCode: 'AF',
+    flightNumber: 'AF149',
+    departure: { city: 'Lagos', airport: 'Murtala Muhammed Intl', code: 'LOS', time: '23:55', date: '2024-12-20' },
+    arrival: { city: 'Paris', airport: 'Charles de Gaulle', code: 'CDG', time: '06:10', date: '2024-12-21' },
+    duration: '6h 15m',
+    stops: 0,
+    price: 820000,
+    currency: 'NGN',
+    class: 'economy',
+    seatsAvailable: 78,
+    type: 'international',
+    amenities: ['WiFi', 'French Cuisine', 'Entertainment', 'Champagne']
+  },
+  {
+    id: 'INT008',
+    airline: 'Skyserve Airways',
+    airlineCode: 'SK',
+    flightNumber: 'SK102',
+    departure: { city: 'Lagos', airport: 'Murtala Muhammed Intl', code: 'LOS', time: '14:00', date: '2024-12-20' },
+    arrival: { city: 'Accra', airport: 'Kotoka Intl', code: 'ACC', time: '15:00', date: '2024-12-20' },
+    duration: '1h 00m',
+    stops: 0,
+    price: 185000,
+    currency: 'NGN',
+    class: 'economy',
+    seatsAvailable: 52,
+    type: 'international',
+    amenities: ['Snacks', 'Entertainment']
+  },
+  {
+    id: 'INT009',
+    airline: 'Ethiopian Airlines',
+    airlineCode: 'ET',
+    flightNumber: 'ET901',
+    departure: { city: 'Lagos', airport: 'Murtala Muhammed Intl', code: 'LOS', time: '08:30', date: '2024-12-20' },
+    arrival: { city: 'Addis Ababa', airport: 'Bole Intl', code: 'ADD', time: '15:45', date: '2024-12-20' },
+    duration: '4h 15m',
+    stops: 0,
+    price: 520000,
+    currency: 'NGN',
+    class: 'business',
+    seatsAvailable: 18,
+    type: 'international',
+    amenities: ['WiFi', 'Meals', 'Lie-flat Seats', 'Lounge Access', 'Priority Boarding']
+  },
+  {
+    id: 'INT010',
+    airline: 'Skyserve Airways',
+    airlineCode: 'SK',
+    flightNumber: 'SK200',
+    departure: { city: 'Lagos', airport: 'Murtala Muhammed Intl', code: 'LOS', time: '16:00', date: '2024-12-20' },
+    arrival: { city: 'Cairo', airport: 'Cairo Intl', code: 'CAI', time: '22:30', date: '2024-12-20' },
+    duration: '4h 30m',
+    stops: 0,
+    price: 480000,
+    currency: 'NGN',
+    class: 'economy',
+    seatsAvailable: 67,
+    type: 'international',
+    amenities: ['WiFi', 'Meals', 'Entertainment']
+  }
+];
+
+export const allFlights = [...domesticFlights, ...internationalFlights];
