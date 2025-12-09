@@ -134,7 +134,14 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-sky-deep via-primary to-accent flex items-center justify-center p-4">
+    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Background Image */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center"
+        style={{ backgroundImage: `url('/src/assets/bg-terminal.jpg')` }}
+      />
+      <div className="absolute inset-0 bg-gradient-to-br from-sky-deep/90 via-primary/80 to-accent/70" />
+      
       {/* Background pattern */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute top-20 left-10 w-64 h-64 rounded-full bg-accent blur-3xl" />
